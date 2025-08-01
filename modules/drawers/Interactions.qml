@@ -31,10 +31,6 @@ CustomMouseArea {
         return x >= panelX - Config.border.rounding && x <= panelX + panel.width + Config.border.rounding;
     }
 
-    function inLeftPanel(panel: Item, x: real, y: real): bool {
-        return x < bar.implicitWidth + panel.x + panel.width && withinPanelHeight(panel, x, y);
-    }
-
     function inRightPanel(panel: Item, x: real, y: real): bool {
         return x > bar.implicitWidth + panel.x && withinPanelHeight(panel, x, y);
     }
@@ -54,6 +50,7 @@ CustomMouseArea {
     }
 
     anchors.fill: parent
+
     hoverEnabled: true
 
     onPressed: event => dragStart = Qt.point(event.x, event.y)
@@ -71,13 +68,16 @@ CustomMouseArea {
             if (!utilitiesShortcutActive)
                 visibilities.utilities = false;
 
-            if (!popouts.currentName.startsWith("traymenu"))
-                popouts.hasCurrent = false;
+            // if (!popouts.currentName.startsWith("traymenu"))
+            popouts.hasCurrent = false;
 
             if (Config.bar.showOnHover)
                 bar.isHovered = false;
         }
     }
+
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    onClicked: event => bar.checkPopout(event.x, event.y, event.button)
 
     onPositionChanged: event => {
         if (popouts.isDetached)
@@ -164,12 +164,6 @@ CustomMouseArea {
             // If hovering over utilities area while in shortcut mode, transition to hover control
             utilitiesShortcutActive = false;
         }
-
-        // Show popouts on hover
-        if (x < bar.implicitWidth)
-            bar.checkPopout(y);
-        else if (!popouts.currentName.startsWith("traymenu") && !inLeftPanel(panels.popouts, x, y))
-            popouts.hasCurrent = false;
     }
 
     // Monitor individual visibility changes

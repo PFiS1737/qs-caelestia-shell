@@ -27,11 +27,11 @@ StackView {
     popEnter: NoAnim {}
     popExit: NoAnim {}
 
-    HyprlandFocusGrab {
-        active: true
-        windows: [QsWindow.window]
-        onCleared: root.popouts.hasCurrent = false
-    }
+    // HyprlandFocusGrab {
+    //     active: true
+    //     windows: [QsWindow.window]
+    //     onCleared: root.popouts.hasCurrent = false
+    // }
 
     component NoAnim: Transition {
         NumberAnimation {

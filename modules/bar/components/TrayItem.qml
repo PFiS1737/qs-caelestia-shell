@@ -11,14 +11,14 @@ MouseArea {
 
     required property SystemTrayItem modelData
 
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    acceptedButtons: Qt.LeftButton | Qt.MiddleButton
     implicitWidth: Appearance.font.size.small * 2
     implicitHeight: Appearance.font.size.small * 2
 
     onClicked: event => {
         if (event.button === Qt.LeftButton)
             modelData.activate();
-        else
+        else if (event.button === Qt.MiddleButton)
             modelData.secondaryActivate();
     }
 

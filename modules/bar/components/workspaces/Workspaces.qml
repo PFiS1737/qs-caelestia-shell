@@ -88,8 +88,15 @@ StyledClippingRect {
         }
 
         MouseArea {
+            // NOTE: Don't intercept events.
+            //       The event will later spread to `Interactions#onClicked()`
+            //       to make sure popouts close when clicking workspaces.
+            propagateComposedEvents: true
+
             anchors.fill: layout
             onClicked: event => {
+                event.accepted = false;
+
                 const ws = layout.childAt(event.x, event.y).ws;
                 if (Hypr.activeWsId !== ws)
                     Hypr.dispatch(`workspace ${ws}`);

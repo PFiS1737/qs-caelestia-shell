@@ -17,38 +17,67 @@ ColumnLayout {
     required property BarPopouts.Wrapper popouts
     readonly property int vPadding: Appearance.padding.large
 
-    function checkPopout(y: real): void {
+    function checkPopout(x, y, button): bool {
+        if (x > implicitWidth)
+            return false;
+
         const ch = childAt(width / 2, y) as WrappedLoader;
-        if (!ch) {
+
+        const {
+            has,
+            name,
+            item
+        } = checkPopoutActiveWindow(ch, y) || checkPopoutState(ch, y) || (button === Qt.RightButton && checkPopoutTray(ch, y));
+
+        if (has && (popouts.hasCurrent === false || name !== popouts.currentName)) {
+            popouts.currentName = name;
+            popouts.currentCenter = item.mapToItem(root, 0, item.implicitHeight / 2).y;
+            popouts.hasCurrent = true;
+            return true;
+        } else if (popouts.hasCurrent) {
             popouts.hasCurrent = false;
-            return;
+            return false;
         }
+    }
 
-        const id = ch.id;
-        const top = ch.y;
-        const item = ch.item;
-        const itemHeight = item.implicitHeight;
+    function checkPopoutActiveWindow(ch, y) {
+        if (ch?.id === "activeWindow") {
+            return {
+                has: true,
+                name: "activewindow",
+                item: ch.item
+            };
+        }
+    }
 
-        if (id === "statusIcons") {
-            const items = item.items;
-            const icon = items.childAt(items.width / 2, mapToItem(items, 0, y).y);
-            if (icon) {
-                popouts.currentName = icon.name;
-                popouts.currentCenter = Qt.binding(() => icon.mapToItem(root, 0, icon.implicitHeight / 2).y);
-                popouts.hasCurrent = true;
-            }
-        } else if (id === "tray") {
+    function checkPopoutTray(ch, y) {
+        if (ch?.id === "tray") {
+            const top = ch.y;
+            const item = ch.item;
+            const itemHeight = item.implicitHeight;
             const index = Math.floor(((y - top) / itemHeight) * item.items.count);
             const trayItem = item.items.itemAt(index);
             if (trayItem) {
-                popouts.currentName = `traymenu${index}`;
-                popouts.currentCenter = Qt.binding(() => trayItem.mapToItem(root, 0, trayItem.implicitHeight / 2).y);
-                popouts.hasCurrent = true;
+                return {
+                    has: true,
+                    name: `traymenu${index}`,
+                    item: trayItem
+                };
             }
-        } else if (id === "activeWindow") {
-            popouts.currentName = id.toLowerCase();
-            popouts.currentCenter = item.mapToItem(root, 0, itemHeight / 2).y;
-            popouts.hasCurrent = true;
+        }
+    }
+
+    function checkPopoutState(ch, y) {
+        if (ch?.id === "statusIcons") {
+            const items = ch.item.items;
+            const icon = items.childAt(items.width / 2, mapToItem(items, 0, y).y);
+            if (icon) {
+                return {
+                    has: true,
+                    name: icon.name,
+                    item: icon
+                };
+            }
         }
     }
 

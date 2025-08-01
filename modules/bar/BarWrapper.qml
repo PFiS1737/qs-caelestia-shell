@@ -19,8 +19,8 @@ Item {
     readonly property bool shouldBeVisible: Config.bar.persistent || visibilities.bar || isHovered
     property bool isHovered
 
-    function checkPopout(y: real): void {
-        content.item?.checkPopout(y);
+    function checkPopout(x, y, button): bool {
+        return content.item?.checkPopout(x, y, button);
     }
 
     function handleWheel(y: real, angleDelta: point): void {
