@@ -104,8 +104,10 @@ CustomMouseArea {
 
         // Always update visibility based on hover if not in shortcut mode
         if (!osdShortcutActive) {
-            visibilities.osd = showOsd;
-            osdHovered = showOsd;
+            if (!visibilities.session || !showOsd) {
+                visibilities.osd = showOsd;
+                osdHovered = showOsd;
+            }
         } else if (showOsd) {
             // If hovering over OSD area while in shortcut mode, transition to hover control
             osdShortcutActive = false;
