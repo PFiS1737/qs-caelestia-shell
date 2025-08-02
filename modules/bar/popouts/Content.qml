@@ -18,7 +18,7 @@ Item {
     implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.large * 2
 
     HyprlandFocusGrab {
-        active: true
+        active: !wrapper.isDetached
         windows: [QsWindow.window]
         onCleared: wrapper.close()
     }
