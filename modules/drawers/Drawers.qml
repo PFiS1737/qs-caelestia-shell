@@ -64,9 +64,10 @@ Variants {
             }
 
             HyprlandFocusGrab {
-                active: (visibilities.launcher && Config.launcher.enabled) || (visibilities.session && Config.session.enabled)
+                active: (visibilities.dashboard && Config.dashboard.enabled) || (visibilities.launcher && Config.launcher.enabled) || (visibilities.session && Config.session.enabled)
                 windows: [win]
                 onCleared: {
+                    visibilities.dashboard = false;
                     visibilities.launcher = false;
                     visibilities.session = false;
                 }

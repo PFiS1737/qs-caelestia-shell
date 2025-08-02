@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.config
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Services.SystemTray
 import QtQuick
 
@@ -15,6 +16,12 @@ Item {
 
     implicitWidth: (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Appearance.padding.large * 2
     implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.large * 2
+
+    HyprlandFocusGrab {
+        active: true
+        windows: [QsWindow.window]
+        onCleared: wrapper.close()
+    }
 
     Item {
         id: content

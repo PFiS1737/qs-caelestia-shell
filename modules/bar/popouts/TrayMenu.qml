@@ -5,7 +5,6 @@ import qs.services
 import qs.config
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Controls
 
@@ -114,7 +113,7 @@ StackView {
                                     }));
                                 else {
                                     item.modelData.triggered();
-                                    root.popouts.hasCurrent = false;
+                                    root.popouts.close();
                                 }
                             }
                         }
