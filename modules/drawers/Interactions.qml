@@ -113,8 +113,6 @@ CustomMouseArea {
             const dragX = x - dragStart.x;
             if (dragX < -Config.session.dragThreshold)
                 visibilities.session = true;
-            else if (dragX > Config.session.dragThreshold)
-                visibilities.session = false;
         }
 
         // Show launcher on hover, or show/hide on drag if hover is disabled
@@ -124,8 +122,6 @@ CustomMouseArea {
             const dragY = y - dragStart.y;
             if (dragY < -Config.launcher.dragThreshold)
                 visibilities.launcher = true;
-            else if (dragY > Config.launcher.dragThreshold)
-                visibilities.launcher = false;
         }
 
         // Show/hide dashboard on drag
@@ -133,8 +129,6 @@ CustomMouseArea {
             const dragY = y - dragStart.y;
             if (dragY > Config.dashboard.dragThreshold)
                 visibilities.dashboard = true;
-            else if (dragY < -Config.dashboard.dragThreshold)
-                visibilities.dashboard = false;
         }
 
         // Show utilities on hover
