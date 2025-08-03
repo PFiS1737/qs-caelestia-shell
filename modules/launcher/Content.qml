@@ -5,6 +5,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 import qs.config
+import qs.utils
 import Quickshell
 import QtQuick
 
@@ -23,6 +24,17 @@ Item {
 
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
+
+    Connections {
+        target: root.visibilities
+
+        function onLauncherChanged(): void {
+            if (target.launcher)
+                FocusManager.focus(search);
+            else
+                FocusManager.blur();
+        }
+    }
 
     Item {
         id: listWrapper
@@ -126,26 +138,6 @@ Item {
                 } else if (event.key === Qt.Key_Backtab || (event.key === Qt.Key_Tab && (event.modifiers & Qt.ShiftModifier))) {
                     list.currentList?.decrementCurrentIndex();
                     event.accepted = true;
-                }
-            }
-
-            Connections {
-                target: root.visibilities
-
-                function onLauncherChanged(): void {
-                    if (root.visibilities.launcher)
-                        search.focus = true;
-                    else {
-                        search.text = "";
-                        const current = list.currentList;
-                        if (current)
-                            current.currentIndex = 0;
-                    }
-                }
-
-                function onSessionChanged(): void {
-                    if (root.visibilities.launcher && !root.visibilities.session)
-                        search.focus = true;
                 }
             }
         }

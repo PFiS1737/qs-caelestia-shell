@@ -33,6 +33,19 @@ Item {
     implicitHeight: 0
     implicitWidth: content.implicitWidth
 
+    Keys.onEscapePressed: visibilities.dashboard = false
+
+    Connections {
+        target: root.visibilities
+
+        function onDashboardChanged(): void {
+            if (target.dashboard)
+                FocusManager.focus(root);
+            else
+                FocusManager.blur();
+        }
+    }
+
     states: State {
         name: "visible"
         when: root.visibilities.dashboard && Config.dashboard.enabled

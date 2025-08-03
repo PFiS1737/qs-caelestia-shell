@@ -72,6 +72,7 @@ Row {
 
                     function onClicked(): void {
                         root.visibilities.launcher = false;
+                        root.visibilities.dashboard = false;
                         root.state.facePicker.open();
                     }
                 }

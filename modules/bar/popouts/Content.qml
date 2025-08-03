@@ -17,6 +17,9 @@ Item {
     implicitWidth: (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Appearance.padding.large * 2
     implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.large * 2
 
+    focus: true
+    Keys.onEscapePressed: wrapper.close()
+
     HyprlandFocusGrab {
         active: !wrapper.isDetached
         windows: [QsWindow.window]

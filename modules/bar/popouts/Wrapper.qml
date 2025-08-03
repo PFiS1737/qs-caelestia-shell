@@ -54,6 +54,7 @@ Item {
     implicitWidth: nonAnimWidth
     implicitHeight: nonAnimHeight
 
+    focus: true
     Keys.onEscapePressed: close()
 
     HyprlandFocusGrab {
