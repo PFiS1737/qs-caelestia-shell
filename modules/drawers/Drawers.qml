@@ -27,10 +27,19 @@ Variants {
         StyledWindow {
             id: win
 
-            screen: scope.modelData
             name: "drawers"
+            screen: scope.modelData
+
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
+            Binding {
+                when: interactions.dragging
+
+                target: win
+                property: "WlrLayershell.keyboardFocus"
+                value: WlrKeyboardFocus.OnDemand
+            }
 
             mask: Region {
                 x: bar.implicitWidth
@@ -117,6 +126,8 @@ Variants {
             }
 
             Interactions {
+                id: interactions
+
                 screen: scope.modelData
                 popouts: panels.popouts
                 visibilities: visibilities

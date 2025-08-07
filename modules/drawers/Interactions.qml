@@ -15,11 +15,46 @@ CustomMouseArea {
     required property Panels panels
     required property Item bar
 
-    property point dragStart
-
     property bool osdHovered
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
+
+    property point dragStart
+    property bool dragging
+
+    onPressed: event => {
+        dragStart = Qt.point(event.x, event.y);
+        dragging = true;
+    }
+    onContainsMouseChanged: {
+        if (!containsMouse) {
+            dragging = false;
+
+            // Only hide if not activated by shortcut
+            if (!osdShortcutActive) {
+                visibilities.osd = false;
+                osdHovered = false;
+            }
+
+            if (!utilitiesShortcutActive)
+                visibilities.utilities = false;
+
+            if (Config.bar.showOnHover)
+                bar.isHovered = false;
+        }
+    }
+
+    anchors.fill: parent
+    hoverEnabled: true
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+    onClicked: event => bar.checkPopout(event.x, event.y, event.button)
+
+    function onWheel(event: WheelEvent): void {
+        if (event.x < bar.implicitWidth) {
+            bar.handleWheel(event.y, event.angleDelta);
+        }
+    }
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = Config.border.thickness + panel.y;
@@ -43,46 +78,12 @@ CustomMouseArea {
         return y > root.height - Config.border.thickness - panel.height - Config.border.rounding && withinPanelWidth(panel, x, y);
     }
 
-    function onWheel(event: WheelEvent): void {
-        if (event.x < bar.implicitWidth) {
-            bar.handleWheel(event.y, event.angleDelta);
-        }
-    }
-
-    anchors.fill: parent
-
-    hoverEnabled: true
-
-    onPressed: event => dragStart = Qt.point(event.x, event.y)
-    onContainsMouseChanged: {
-        if (!containsMouse) {
-            // Only hide if not activated by shortcut
-            if (!osdShortcutActive) {
-                visibilities.osd = false;
-                osdHovered = false;
-            }
-
-            if (!utilitiesShortcutActive)
-                visibilities.utilities = false;
-
-            if (Config.bar.showOnHover)
-                bar.isHovered = false;
-        }
-    }
-
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
-    onClicked: event => bar.checkPopout(event.x, event.y, event.button)
-
     onPositionChanged: event => {
         if (popouts.isDetached)
             return;
 
         const x = event.x;
         const y = event.y;
-
-        // Show bar in non-exclusive mode on hover
-        if (!visibilities.bar && Config.bar.showOnHover && x < bar.implicitWidth)
-            bar.isHovered = true;
 
         // Show/hide bar on drag
         if (pressed && dragStart.x < bar.implicitWidth) {
@@ -91,21 +92,6 @@ CustomMouseArea {
                 visibilities.bar = true;
             else if (dragX < -Config.bar.dragThreshold)
                 visibilities.bar = false;
-        }
-
-        // Show osd on hover
-        const showOsd = inRightPanel(panels.osd, x, y);
-
-        // Always update visibility based on hover if not in shortcut mode
-        if (!osdShortcutActive) {
-            if (!visibilities.session || !showOsd) {
-                visibilities.osd = showOsd;
-                osdHovered = showOsd;
-            }
-        } else if (showOsd) {
-            // If hovering over OSD area while in shortcut mode, transition to hover control
-            osdShortcutActive = false;
-            osdHovered = true;
         }
 
         // Show/hide session on drag
@@ -129,6 +115,25 @@ CustomMouseArea {
             const dragY = y - dragStart.y;
             if (dragY > Config.dashboard.dragThreshold)
                 visibilities.dashboard = true;
+        }
+
+        // Show bar in non-exclusive mode on hover
+        if (!visibilities.bar && Config.bar.showOnHover && x < bar.implicitWidth)
+            bar.isHovered = true;
+
+        // Show osd on hover
+        const showOsd = inRightPanel(panels.osd, x, y);
+
+        // Always update visibility based on hover if not in shortcut mode
+        if (!osdShortcutActive) {
+            if (!visibilities.session || !showOsd) {
+                visibilities.osd = showOsd;
+                osdHovered = showOsd;
+            }
+        } else if (showOsd) {
+            // If hovering over OSD area while in shortcut mode, transition to hover control
+            osdShortcutActive = false;
+            osdHovered = true;
         }
 
         // Show utilities on hover

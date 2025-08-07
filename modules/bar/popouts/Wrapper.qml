@@ -63,14 +63,6 @@ Item {
         onCleared: root.close()
     }
 
-    Binding {
-        when: root.isDetached
-
-        target: QsWindow.window
-        property: "WlrLayershell.keyboardFocus"
-        value: WlrKeyboardFocus.OnDemand
-    }
-
     Comp {
         id: content
 
