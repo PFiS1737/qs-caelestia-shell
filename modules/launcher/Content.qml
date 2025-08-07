@@ -29,9 +29,10 @@ Item {
         target: root.visibilities
 
         function onLauncherChanged(): void {
-            if (target.launcher)
+            if (target.launcher) {
                 FocusManager.focus(search);
-            else
+                search.selectAll();
+            } else
                 FocusManager.blur();
         }
     }
