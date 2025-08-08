@@ -32,8 +32,17 @@ Item {
             if (target.launcher) {
                 FocusManager.focus(search);
                 search.selectAll();
-            } else
+                if (list.showWallpapers) {
+                    const currentItem = list.currentList?.currentItem;
+                    if (currentItem && currentItem.modelData.path !== Wallpapers.actualCurrent)
+                        Wallpapers.preview(currentItem.modelData.path);
+                }
+            } else {
                 FocusManager.blur();
+                if (list.showWallpapers) {
+                    Wallpapers.stopPreview();
+                }
+            }
         }
     }
 
